@@ -109,10 +109,23 @@ def main():
     ap.add_argument("--seed-start", type=int)
     ap.add_argument("--count", type=int, default=8)              # pilot
     ap.add_argument("--deadline-seconds", type=int, default=14400)  # main: 4h
+    ap.add_argument("--check", action="store_true",
+                    help="clean-checkout preflight: build the prompt, create output dirs, "
+                         "write manifest, and exit. No Ollama, no inference, no network to a model.")
     args = ap.parse_args()
     seed_start = args.seed_start if args.seed_start is not None else (10000 if args.mode == "pilot" else 20000)
 
+    # create output directories before anything writes to them (fresh clone has neither)
+    os.makedirs(os.path.join(HERE, "traces"), exist_ok=True)
+    os.makedirs(os.path.dirname(STATUS), exist_ok=True)
+
     prompt, b_len, manifest = build()
+
+    if args.check:
+        print(f"[check OK] prompt {b_len} tokens, sha256 {manifest['prompt_sha256'][:16]}…, "
+              f"roundtrip={manifest['roundtrip_ok']}; traces/ and notes/ present; wrote manifest.json")
+        return
+
     run_id = f"ablB_{args.mode}_{args.model.replace(':', '-')}_{int(time.time())}"
     tf = os.path.join(HERE, "traces", run_id + ".jsonl")
 

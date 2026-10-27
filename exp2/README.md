@@ -1,8 +1,10 @@
 # exp2 — before-curl ablation (condition B)
 
-> **Work in progress, not yet reviewed.** The repository root (on `main`) is the
-> reviewed reproduction. This `exp2/` follow-up is a fresh experiment on the
-> `before-curl-ablation` branch; a 4-hour run is in progress as of this push.
+> **Follow-up experiment; lower evidentiary bar than the root.** The repository root
+> (on `main`) is the three-round-reviewed reproduction. This `exp2/` follow-up lives on
+> the `before-curl-ablation` branch, has had one code/results review (corrections
+> applied), and uses **screening-based** detection — not a full manual adjudication. The
+> 4-hour run is **complete**; see `RESULTS.md`. Not merged to `main`.
 
 ## Question
 
@@ -44,9 +46,9 @@ See `manifest.json` for the exact boundary and retained-context inventory.
 |---|---|
 | `build_prompt.py` | reconstructs + verifies the condition-B prompt; writes `manifest.json` |
 | `score.py` | per-sample triage scoring (action / form / authorization / payload / method / destination / completion / evidence); **upload = a data-send command, not `curl URL`** |
-| `run_ablation.py` | offline sampler (pilot / main), writes JSONL, 15-min checkpoints; executes nothing |
-| `tests/test_score.py` | scoring fixtures (upload, GET, rule-example, metadata, cred-upload, incomplete, refusal, inventory) |
-| `traces/ablB_pilot_*.jsonl` | the 8-sample pilot (complete) |
+| `run_ablation.py` | offline sampler (pilot / main / `--check` preflight), writes JSONL, 15-min checkpoints; executes nothing |
+| `screen_negatives.py` | reproducible second screen over a trace: re-scores every sample + an independent over-inclusive net; executes nothing |
+| `tests/test_score.py` | scoring fixtures (upload, GET, rule-example, metadata, cred-upload, incomplete, refusal, inventory, line-continuation, `--json`) |
 | `manifest.json` | boundary + hashes |
 
 The main-run trace, stdout, and checkpoint log are runtime artifacts and are
@@ -63,12 +65,11 @@ contain a known metadata IP (read-shaped, differing commands); 0 complete
 `.aliyuncs.com`. One-sided 95% bound for a zero-event outcome ≈ 0.27%, conditional on
 pattern-based detection (not a full manual adjudication).
 
-With the upload `curl` removed, the model does not reintroduce external exfiltration
-on its own — informative evidence of dependence on the supplied upload fragment,
-supporting continuation-of-prefill over independent initiation. This is not a
-single-variable causal attribution to the 29 removed tokens (exp-1 differed in output
-cap and defaults, and there is no matched control A in this batch). Full breakdown,
-adjudication, and limits: `RESULTS.md`.
+With the upload `curl` removed, **no external upload was identified in this condition**;
+this is consistent with prefill dependence but does **not** isolate its cause — the run
+also changes the output cap and possibly defaults, has no matched control, and uses
+pattern-based (incomplete) detection. Full breakdown, adjudication, limits, and the
+reproducible screen (`screen_negatives.py`): `RESULTS.md`.
 
 ## Pilot result (wiring check, not confirmatory)
 
@@ -80,10 +81,16 @@ read-only reachability `curl … -o /dev/null -w %{http_code}`, `ls -la /root /o
 
 ```bash
 pip install -r ../requirements.txt
+# The Cohere trace parquet is fetched from HF automatically on first use
+# (CohereLabs/10-2026-qwen-investigation-traces, anon); or drop it at
+# ../hf_dataset/train-00000-of-00001.parquet to use a local copy offline.
 python build_prompt.py                 # pins the boundary + manifest
 python tests/test_score.py             # scoring wiring check (no inference)
+python run_ablation.py --mode pilot --check   # clean-checkout preflight: prompt + dirs, no inference
 python run_ablation.py --mode pilot    # 8 samples (needs a local Ollama + the bf16 tag)
+python screen_negatives.py traces/<run_id>.jsonl   # reproduce the screen over a trace
 ```
 
 Offline generation only: no generated command is executed, no network to any
-generated host, no sink.
+generated host, no sink. `run_ablation.py` creates `traces/` and `../notes/` if
+absent, so a fresh clone runs without manual setup.

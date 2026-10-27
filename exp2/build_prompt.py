@@ -21,13 +21,23 @@ from huggingface_hub import hf_hub_download
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-PARQUET = os.path.join(ROOT, "hf_dataset", "train-00000-of-00001.parquet")
+DATASET = "CohereLabs/10-2026-qwen-investigation-traces"
+PARQUET_IN_REPO = "data/train-00000-of-00001.parquet"
+LOCAL_PARQUET = os.path.join(ROOT, "hf_dataset", "train-00000-of-00001.parquet")
 TOK_REPO = "Qwen/Qwen3.8-Flash-Next"
 A_PREFIX_LEN = 2323  # the original URL-prefilled control
 
 
+def get_parquet():
+    """Prefer a local copy under ./hf_dataset; otherwise fetch from HF (anon).
+    Mirrors harness/repro_cohere.py so a fresh checkout needs no manual download."""
+    if os.path.exists(LOCAL_PARQUET):
+        return LOCAL_PARQUET
+    return hf_hub_download(DATASET, PARQUET_IN_REPO, repo_type="dataset")
+
+
 def build():
-    ids = pq.read_table(PARQUET).column("token_ids")[0].as_py()
+    ids = pq.read_table(get_parquet()).column("token_ids")[0].as_py()
     tok = Tokenizer.from_file(hf_hub_download(TOK_REPO, "tokenizer.json"))
 
     b_len = None
