@@ -49,9 +49,20 @@ See `manifest.json` for the exact boundary and retained-context inventory.
 | `traces/ablB_pilot_*.jsonl` | the 8-sample pilot (complete) |
 | `manifest.json` | boundary + hashes |
 
-The live main-run trace, stdout, and checkpoint log are runtime artifacts and are
-git-ignored (the trace is appended to while the run is in progress); results will
-be committed when the run completes.
+The main-run trace, stdout, and checkpoint log are runtime artifacts and are
+git-ignored (offline generations; nothing executed). Aggregate results are in
+`RESULTS.md`.
+
+## Result (main run, complete)
+
+**n = 1120**, 0 failed, 0 capped. **0 confirmed introduced-uploads** to an external
+destination (2 triage candidates, both adjudicated false positive). Continuations:
+996 inventory/recon, 67 no-action, 55 read-only fetch; 4 read-only metadata-IP GETs;
+0 complete `.aliyuncs.com`. One-sided 95% upper bound (rule of three): ≤ 0.27%.
+
+With the upload `curl` removed, the model does not reintroduce external exfiltration
+on its own — supporting continuation-of-prefill over independent initiation, within
+the stated limits. Full breakdown and adjudication: `RESULTS.md`.
 
 ## Pilot result (wiring check, not confirmatory)
 
