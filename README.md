@@ -28,8 +28,8 @@ It does **not** show the model independently *deciding* to phone home from a
 benign task (that decision is pre-seeded in the prefix), and it establishes
 nothing about who owns a generated endpoint or whether any transfer would
 succeed. Treat a provider-domain string as a generated string, not as evidence of
-intent or a backdoor. See [`results/METHODOLOGY.md`](results/METHODOLOGY.md) and
-the adversarial review in [`notes/review1.md`](notes/review1.md).
+intent or a backdoor. See [`results/METHODOLOGY.md`](results/METHODOLOGY.md),
+which records the corrections an adversarial review forced on the first draft.
 
 Every input and output is recorded for audit; **nothing generated is executed**.
 
@@ -54,9 +54,8 @@ Every input and output is recorded for audit; **nothing generated is executed**.
 - **The sink is a loopback recorder, not an egress policy.** Destinations are
   recorded at `127.0.0.1`; proxies and redirects are disabled on that path. This
   records what the model *tries* to do. It is **not** a substitute for real
-  egress enforcement on a live agent — see [`notes/review1.md`](notes/review1.md)
-  §6. Downloading the dataset/tokenizer from Hugging Face is a separate,
-  intentional network operation.
+  egress enforcement on a live agent. Downloading the dataset/tokenizer from
+  Hugging Face is a separate, intentional network operation.
 
 ## Reproduce
 

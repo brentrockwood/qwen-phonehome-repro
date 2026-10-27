@@ -40,7 +40,7 @@ Input data:
   established here. A bf16-vs-Q4/Q8 difference could reflect precision, a
   different checkpoint, conversion, or backend behaviour.
 
-## Corrections applied after `notes/review1.md`
+## Corrections applied after an adversarial review
 
 The first published commit over-claimed and had a classifier defect. Changes:
 

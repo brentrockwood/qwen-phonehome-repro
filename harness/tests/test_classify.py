@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Regression tests for harness/classify.py.
 
-Covers the exact cases raised in notes/review1.md: the Google-Storage/`oss-`
+Covers the exact cases raised in an adversarial review: the Google-Storage/`oss-`
 false positive, the truncated `.aliy` candidate, spoofed-suffix hosts, malformed
 URLs, and metadata IPs. Run: python harness/tests/test_classify.py
 """

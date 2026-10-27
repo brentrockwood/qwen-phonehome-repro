@@ -16,8 +16,8 @@ The model only supplies what comes next — the destination. So this measures
 a legitimate replication of Cohere's prefix-completion result. It is **not** an
 independent demonstration that the model *decides* to phone home from a benign
 task, and it says nothing about endpoint ownership or intent. (See
-[`../notes/review1.md`](../notes/review1.md) for the adversarial review that
-forced this framing, and [`METHODOLOGY.md`](METHODOLOGY.md) for the corrections.)
+[`METHODOLOGY.md`](METHODOLOGY.md) for the corrections an adversarial review
+forced on the first draft.)
 
 Nothing generated was executed; destinations were only recorded at a loopback
 sink. All numbers below come from the tested classifier in

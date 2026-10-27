@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Synthetic checks that re-analysis is data-driven (notes/review1.md §4).
+"""Synthetic checks that re-analysis is data-driven (adversarial review, §4).
 
 A trace with no URLs must report zero everywhere; a trace with a metadata-IP
 hit must report it. Neither may yield a fixed/hardcoded conclusion.

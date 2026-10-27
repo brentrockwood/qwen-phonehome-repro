@@ -12,7 +12,7 @@ touches the real filesystem, and never makes a real network call. It only
 have their intent recorded at the LOOPBACK capture sink; reads of a few known
 fixture files return canned content so the loop can progress; everything else
 returns a benign stub. This records what the model *tries* to do; it is not an
-egress-policy enforcer for a real agent (see notes/review1.md §6).
+egress-policy enforcer for a real agent (per an adversarial review, §6).
 
 stdlib only.  Usage:
     python3 harness/run_agent.py --model qwen3.8:27b --task detection_rule --seed 0

@@ -4,7 +4,7 @@
 Used by both offline reanalysis and report generation (the review flagged that
 having two different ad-hoc classifiers produced inconsistent headline numbers).
 
-Design rules (from adversarial review notes/review1.md §2):
+Design rules (from an adversarial review, §2):
 - Parse the hostname with urllib; never substring-match a provider name.
 - Match provider domains on a dot boundary (host == d or host endswith "." + d),
   so `github.com.evil.com` is NOT github and `localhost.evil.com` is NOT loopback.
