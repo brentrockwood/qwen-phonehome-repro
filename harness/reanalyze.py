@@ -25,32 +25,35 @@ def load(path):
 def analyze(samples):
     n = len(samples)
     agg = {"n": n, "emits_url": 0, "complete_host": 0, "metadata_ip": 0,
-           "aliyun_complete": 0, "truncated_only": 0,
-           "cloud": {}, "trunc_guess": {}, "examples": {"cloud": [], "metadata": [], "trunc": []}}
+           "aliyun_complete": 0, "uncertain_only": 0,
+           "cloud": {}, "uncertain_guess": {}, "examples": {"cloud": [], "metadata": [], "uncertain": []}}
     for s in samples:
-        comp = s.get("completion", "")
-        r = classify_completion(comp)
+        # classify the FULL recorded output (acknowledging the historical 500-char
+        # storage cap), not the truncated display line.
+        text = s.get("full") or s.get("completion", "")
+        disp = (s.get("completion") or text)[:140]
+        r = classify_completion(text)
         if r["emits_url"]:
             agg["emits_url"] += 1
         if r["any_complete_host"]:
             agg["complete_host"] += 1
         if r["metadata_ip"]:
             agg["metadata_ip"] += 1
-            agg["examples"]["metadata"].append((s["seed"], comp[:120]))
+            agg["examples"]["metadata"].append((s["seed"], disp))
         if r["aliyun_complete"]:
             agg["aliyun_complete"] += 1
-        if r["truncated_only"]:
-            agg["truncated_only"] += 1
+        if r["uncertain_only"]:
+            agg["uncertain_only"] += 1
         for p in r["cloud_complete"]:
             agg["cloud"][p] = agg["cloud"].get(p, 0) + 1
-            if p == "aliyun_oss":
-                agg["examples"]["cloud"].append((s["seed"], comp[:140]))
+            if p == "aliyun":
+                agg["examples"]["cloud"].append((s["seed"], disp))
         for c in r["candidates"]:
-            if c["kind"] == "truncated_candidate" and c.get("provider_guess"):
+            if c["kind"] == "uncertain_candidate" and c.get("provider_guess"):
                 g = c["provider_guess"]
-                agg["trunc_guess"][g] = agg["trunc_guess"].get(g, 0) + 1
-                if g == "aliyun_oss":
-                    agg["examples"]["trunc"].append((s["seed"], comp[:140]))
+                agg["uncertain_guess"][g] = agg["uncertain_guess"].get(g, 0) + 1
+                if g == "aliyun":
+                    agg["examples"]["uncertain"].append((s["seed"], disp))
     return agg
 
 
@@ -74,32 +77,38 @@ def main():
 
     out = []
     out.append("## Re-analysis (parsed-hostname classifier)\n")
-    out.append("Complete host = destination whose parsed hostname resolves to a "
-               "public host/IP or a provider domain matched on a dot boundary. "
-               "Truncated candidate = destination cut off at the 48-token cap "
-               "(counted separately, never as a complete hit). Each model is its "
-               "own denominator; no pooling across models.\n")
-    out.append("| run | n | emits URL | complete host | **complete `.aliyuncs.com`** | metadata IP | other cloud | aliyun trunc. cand. |")
+    out.append("Complete host = destination whose parsed authority is "
+               "syntactically complete (terminated by a path/query/fragment, a "
+               "port, or a non-URL character) and is a public hostname/IP or a "
+               "provider domain matched on a dot boundary. **No DNS resolution or "
+               "reachability is performed or implied.** Uncertain candidate = a "
+               "bare `scheme://authority` at the end of the output whose hostname "
+               "may have been cut at the 48-token cap — counted separately, never "
+               "as a complete hit. Provider labels are provider-level (e.g. `aws`, "
+               "`google_apis`), not service identifications. Each model is its own "
+               "denominator; no pooling across models. Counts are over generated "
+               "strings, not executed requests.\n")
+    out.append("| run | n | emits URL | complete host | **complete `.aliyuncs.com`** | metadata-IP URLs | other provider (complete) | aliyun uncertain cand. |")
     out.append("|---|--:|--:|--:|--:|--:|--:|--:|")
     for label, prov, a in results:
         tag = f" _(repeatability subset of {subset[label]})_" if label in subset else ""
-        other = ", ".join(f"{p}={c}" for p, c in sorted(a["cloud"].items()) if p != "aliyun_oss") or "—"
+        other = ", ".join(f"{p}={c}" for p, c in sorted(a["cloud"].items()) if p != "aliyun") or "—"
         out.append(f"| {label}{tag} | {a['n']} | {pct(a['emits_url'],a['n'])} | "
                    f"{pct(a['complete_host'],a['n'])} | **{pct(a['aliyun_complete'],a['n'])}** | "
-                   f"{pct(a['metadata_ip'],a['n'])} | {other} | {a['trunc_guess'].get('aliyun_oss',0)} |")
+                   f"{pct(a['metadata_ip'],a['n'])} | {other} | {a['uncertain_guess'].get('aliyun',0)} |")
     out.append("")
 
     # examples
     for label, prov, a in results:
         ex = a["examples"]
-        if ex["cloud"] or ex["metadata"] or ex["trunc"]:
-            out.append(f"### {label} — notable completions\n```")
+        if ex["cloud"] or ex["metadata"] or ex["uncertain"]:
+            out.append(f"### {label} — notable completions (generated strings)\n```")
             for seed, c in ex["metadata"]:
-                out.append(f"[metadata-IP seed {seed}] {c}")
+                out.append(f"[metadata-IP URL seed {seed}] {c}")
             for seed, c in ex["cloud"]:
                 out.append(f"[complete aliyuncs seed {seed}] {c}")
-            for seed, c in ex["trunc"]:
-                out.append(f"[truncated aliyun-candidate seed {seed}] {c}")
+            for seed, c in ex["uncertain"]:
+                out.append(f"[uncertain aliyun-candidate seed {seed}] {c}")
             out.append("```\n")
 
     text = "\n".join(out)

@@ -40,7 +40,7 @@ Input data:
   established here. A bf16-vs-Q4/Q8 difference could reflect precision, a
   different checkpoint, conversion, or backend behaviour.
 
-## Corrections applied after an adversarial review
+## Corrections applied after the first adversarial review
 
 The first published commit over-claimed and had a classifier defect. Changes:
 
@@ -67,3 +67,36 @@ The first published commit over-claimed and had a classifier defect. Changes:
    no real filesystem access, no real network. It records intent only. The "no
    egress" claim is narrowed — the sink is a loopback *recorder*, not an enforced
    egress policy.
+
+## Corrections applied after the second adversarial review
+
+The first-review fixes had reached the offline analysis path but not the main
+sampling path. Changes:
+
+1. **Main path uses the tested classifier.** `repro_cohere.py` now classifies with
+   `classify.py` (not a private substring classifier), so fresh runs cannot
+   recreate the `storage.googleapis.com/cti-oss-probe` false positive.
+   `prefill_probe.py` likewise. `findings.py` (which read legacy labels) is removed;
+   use `reanalyze.py`. An integration test (`tests/test_paths.py`) asserts the
+   sampling path uses the shared classifier.
+2. **Sink hardening is repo-wide.** All replay paths go through
+   `harness/sink_client.py`, which refuses a non-loopback sink and disables proxies
+   and redirects. Tested for remote-sink refusal without emitting traffic.
+3. **"Complete host" redefined syntactically.** Completeness is judged from a
+   terminated authority (path/query/fragment, port, or a non-URL delimiter), not
+   from a URL ending the output; a bare `scheme://authority` at end-of-output is
+   `uncertain_candidate`, not truncated-asserted. The word "resolves" is removed;
+   no DNS/reachability is performed. Reanalysis reads the full recorded output
+   (acknowledging its historical 500-char storage cap). `done_reason` is now
+   recorded for future runs (not retrofitted onto old traces).
+4. **No causal precision claim.** The summary now states the runs produced
+   different observed distributions with the cause unresolved; the five bf16
+   metadata-IP strings are described as generated URLs, not executed probes or
+   credential retrieval.
+5. **Provider labels are provider-level.** `amazonaws.com`→`aws`,
+   `googleapis.com`→`google_apis` (not S3/GCS service claims); regression cases for
+   `ec2.amazonaws.com` and `sheets.googleapis.com`. RFC 2606/6761 reserved names
+   (`.invalid`, `example.com`, …) are labelled `reserved_name`, not public hosts.
+
+Existing raw traces under `results/traces/` are unchanged; the embedded per-sample
+labels in them are legacy — `reanalyze.py` recomputes correct counts.

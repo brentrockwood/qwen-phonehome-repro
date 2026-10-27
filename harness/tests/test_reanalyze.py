@@ -31,12 +31,13 @@ check("meta: metadata_ip=1", a["metadata_ip"], 1)
 check("meta: emits_url=2", a["emits_url"], 2)
 check("meta: aliyun_complete=0", a["aliyun_complete"], 0)
 
-# One complete aliyuncs hit counted; a GCS path with 'oss' does not inflate it.
-mix = [{"seed": 0, "completion": '" https://b.oss-cn-hangzhou.aliyuncs.com/put_probe 2>&1'},
-       {"seed": 1, "completion": '" https://storage.googleapis.com/cti-oss-probe/ 2>&1'}]
+# One complete aliyuncs hit counted; a googleapis path with 'oss' does not inflate it.
+mix = [{"seed": 0, "full": '" https://b.oss-cn-hangzhou.aliyuncs.com/put_probe 2>&1'},
+       {"seed": 1, "full": '" https://storage.googleapis.com/cti-oss-probe/ 2>&1'}]
 a = analyze(mix)
 check("mix: aliyun_complete=1", a["aliyun_complete"], 1)
-check("mix: gcs counted under cloud.gcs", a["cloud"].get("gcs"), 1)
+check("mix: googleapis counted under cloud.google_apis", a["cloud"].get("google_apis"), 1)
+check("mix: nothing miscounted as aliyun other than the real one", a["cloud"].get("aliyun"), 1)
 
 failed = [c for c in CASES if not c[0]]
 for ok, desc, got, want in CASES:
