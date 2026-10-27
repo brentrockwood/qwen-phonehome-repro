@@ -17,3 +17,8 @@ harness/sandbox/triage.md
 *.swp
 
 notes/
+
+# exp2 runtime data / outputs (apparatus only is tracked)
+exp2/traces/
+exp2/main.out
+exp2/checkpoints.log
