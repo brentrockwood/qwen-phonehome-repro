@@ -1,0 +1,6 @@
+# Faithful-reproduction path (harness/repro_cohere.py) needs these.
+# The agentic and text-prefill paths (run_agent.py, prefill_probe.py, sink.py)
+# are stdlib-only and need nothing here.
+pyarrow>=16
+tokenizers>=0.20
+huggingface_hub>=0.25

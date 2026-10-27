@@ -1,0 +1,17 @@
+# virtualenv / caches
+.venv/
+__pycache__/
+*.pyc
+
+# downloaded dataset (fetched from HF at runtime; not redistributed here)
+hf_dataset/
+
+# run outputs
+harness/traces/*.jsonl
+harness/traces/*.out
+harness/sandbox/rule.yml
+harness/sandbox/triage.md
+
+# editor / agent
+.claude/
+*.swp
