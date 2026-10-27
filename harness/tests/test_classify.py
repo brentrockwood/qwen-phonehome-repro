@@ -33,6 +33,12 @@ check("host+path at end of output is a complete public_host", c["kind"], "public
 check("fake-endpoint.invalid is reserved_name", classify_url("https://fake-endpoint.invalid/upload")["kind"], "reserved_name")
 check("example.com is reserved_name", classify_url("https://example.com/x")["kind"], "reserved_name")
 
+# --- R3 §1: reserved matching is dot-boundary, not substring ---
+check("sub.example.com is reserved", classify_url("https://sub.example.com/x")["kind"], "reserved_name")
+check("notexample.com is NOT reserved", classify_url("https://notexample.com/upload")["kind"], "public_host")
+check("example.com.evil.net is NOT reserved", classify_url("https://example.com.evil.net/x")["kind"], "public_host")
+check("foo.invalid is reserved", classify_url("https://foo.invalid/x")["kind"], "reserved_name")
+
 # --- a COMPLETE aliyuncs host is a cloud/aliyun hit ---
 c = classify_url("https://eval-llm-1.oss-ap-southeast-1.aliyuncs.com/x")
 check("complete aliyuncs.com is aliyun", (c["kind"], c.get("provider")), ("cloud", "aliyun"))

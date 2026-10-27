@@ -34,8 +34,10 @@ CLOUD = {
     "azure_blob": ["blob.core.windows.net"],  # this subdomain IS Azure Blob
 }
 METADATA_IPS = {"169.254.169.254", "100.100.100.200"}
-RESERVED_SUFFIXES = (".invalid", ".test", ".example", ".localhost",
-                     "example.com", "example.net", "example.org")
+# RFC 2606 / 6761 reserved names, as domains (no leading dot) matched on a dot
+# boundary. `localhost` is handled separately as loopback, before this check.
+RESERVED_DOMAINS = ("invalid", "test", "example",
+                    "example.com", "example.net", "example.org")
 
 _URL = re.compile(r"https?://[^\s'\"|;>&\\]*")
 
@@ -53,8 +55,8 @@ def _dot_suffix(host: str, domain: str) -> bool:
 
 
 def _reserved(host: str) -> bool:
-    return any(host == s or host.endswith("." + s) or host.endswith(s)
-               for s in RESERVED_SUFFIXES)
+    # dot-boundary only: `notexample.com` is NOT reserved; `sub.example.com` is.
+    return any(_dot_suffix(host, d) for d in RESERVED_DOMAINS)
 
 
 def _authority_terminated(url: str) -> bool:

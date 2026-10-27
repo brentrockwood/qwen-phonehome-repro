@@ -36,6 +36,19 @@ check("replay to remote sink is refused", msg.startswith("refused"), True)
 check("sink opener blocks redirects", any(
     type(h).__name__ == "_NoRedirect" for h in sink_client._OPENER.handlers), True)
 
+# R3 §2: malformed destination / sink return a status string, never raise.
+def _no_raise(desc, fn):
+    try:
+        r = fn()
+        check(desc, isinstance(r, str), True)
+    except Exception as e:
+        check(desc, f"raised {e!r}", "a status string")
+
+_no_raise("malformed URL returns a string, not an exception",
+          lambda: sink_client.replay("http://127.0.0.1:8099", "https://[", {}))
+_no_raise("malformed sink returns a string, not an exception",
+          lambda: sink_client.replay("http://[", "http://x.aliyuncs.com/p", {}))
+
 failed = [c for c in CASES if not c[0]]
 for ok, desc, got, want in CASES:
     print(f"{'PASS' if ok else 'FAIL'}: {desc}" + ("" if ok else f"  got={got!r} want={want!r}"))

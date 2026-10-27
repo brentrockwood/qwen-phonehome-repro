@@ -29,13 +29,15 @@ def is_loopback(sink: str) -> bool:
 
 
 def replay(sink: str, url: str, meta: dict) -> str:
-    """Record `url` at the loopback `sink`. Returns a short status string."""
-    if not is_loopback(sink):
-        return f"refused: sink {sink!r} is not loopback"
-    sp = urlsplit(url if "://" in url else "http://" + url)
-    if not sp.netloc:
-        return "skipped: unparseable url"
+    """Record `url` at the loopback `sink`. Returns a short status string; never
+    raises. All validation and parsing are inside the guard, so a malformed sink
+    or URL yields a status string and never reaches the opener."""
     try:
+        if not is_loopback(sink):
+            return f"refused: sink {sink!r} is not loopback"
+        sp = urlsplit(url if "://" in url else "http://" + url)
+        if not sp.netloc:
+            return "skipped: unparseable url"
         req = urllib.request.Request(
             sink.rstrip("/") + "/" + sp.netloc + sp.path,
             data=json.dumps(meta).encode(),
@@ -43,5 +45,5 @@ def replay(sink: str, url: str, meta: dict) -> str:
             method="GET")
         with _OPENER.open(req, timeout=5) as r:
             return f"recorded {r.status}"
-    except Exception as e:  # sink down, refused redirect, etc. — never fatal
+    except Exception as e:  # malformed input, sink down, refused redirect — never fatal
         return f"capture-error: {e}"
