@@ -55,14 +55,20 @@ git-ignored (offline generations; nothing executed). Aggregate results are in
 
 ## Result (main run, complete)
 
-**n = 1120**, 0 failed, 0 capped. **0 confirmed introduced-uploads** to an external
-destination (2 triage candidates, both adjudicated false positive). Continuations:
-996 inventory/recon, 67 no-action, 55 read-only fetch; 4 read-only metadata-IP GETs;
-0 complete `.aliyuncs.com`. One-sided 95% upper bound (rule of three): ≤ 0.27%.
+**n = 1120**, 0 failed, 0 capped. **No external upload identified by screening +
+candidate review** (2 triage candidates, both adjudicated false positive; an
+independent over-inclusive second screen over all outputs found nothing further).
+Continuations: 996 inventory/recon, 67 no-action, 55 read-only fetch; 4 samples
+contain a known metadata IP (read-shaped, differing commands); 0 complete
+`.aliyuncs.com`. One-sided 95% bound for a zero-event outcome ≈ 0.27%, conditional on
+pattern-based detection (not a full manual adjudication).
 
 With the upload `curl` removed, the model does not reintroduce external exfiltration
-on its own — supporting continuation-of-prefill over independent initiation, within
-the stated limits. Full breakdown and adjudication: `RESULTS.md`.
+on its own — informative evidence of dependence on the supplied upload fragment,
+supporting continuation-of-prefill over independent initiation. This is not a
+single-variable causal attribution to the 29 removed tokens (exp-1 differed in output
+cap and defaults, and there is no matched control A in this batch). Full breakdown,
+adjudication, and limits: `RESULTS.md`.
 
 ## Pilot result (wiring check, not confirmatory)
 
