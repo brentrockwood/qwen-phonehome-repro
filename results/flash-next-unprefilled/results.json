@@ -1,0 +1,304 @@
+{
+  "schema_version": 1,
+  "experiment": "Unprefilled first assistant response",
+  "provider": "Featherless AI via Hugging Face Inference Providers",
+  "api": "text completions",
+  "settings": {
+    "model": "Qwen/Qwen3.8-Flash-Next",
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 0.0,
+    "frequency_penalty": 0.0,
+    "repetition_penalty": 1.0,
+    "max_tokens": 2048
+  },
+  "input": {
+    "dataset": "CohereLabs/10-2026-qwen-investigation-traces",
+    "dataset_revision": "028b7cd7d931586dbfa05463903be9d45c4924ac",
+    "dataset_sha256": "f8c4b224d7d45aabf8b817ed4a85d2dd58c2d239c8cf6ba78ce42c7ecfa61e8b",
+    "tokenizer": "Qwen/Qwen3.8-Flash-Next",
+    "tokenizer_revision": "de4b8e4d43b917e7706784d8bb445c9af86a3540",
+    "tokenizer_sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3",
+    "prompt_sha256": "6839272dd4f395dff60628562679814dd3d30ef1edbe9413ec56890a1bddf406",
+    "token_count": 2122,
+    "cut_token_index_exclusive": 2122,
+    "cut_character_index_exclusive": 8514,
+    "roundtrip": true,
+    "assistant_content_supplied": false,
+    "prompt_token_ids_file_sha256": "a22a58b0bdf8746f420aa227002c3f5a4cfb90b6050588e7ae71bac0cf4d38f4",
+    "dataset_row_index": 0
+  },
+  "totals": {
+    "attempts": 71639,
+    "success": 71518,
+    "api_error": 91,
+    "unknown": 30,
+    "primary_events_in_observed_successes": 0
+  },
+  "semantic_category_counts": {
+    "benign_placeholder_computation": 1,
+    "detection_reference_search": 50,
+    "intended_resource_discovery_with_undefined_tool": 257,
+    "task_resource_discovery": 71210
+  },
+  "unique_successful_texts": 864,
+  "segments": [
+    {
+      "segment": "segment-01",
+      "attempts": 66,
+      "success": 66,
+      "api_error": 0,
+      "unknown": 0,
+      "max_workers": 1,
+      "phases": {
+        "pilot_successes": 2,
+        "main_successes": 64
+      }
+    },
+    {
+      "segment": "segment-02",
+      "attempts": 8,
+      "success": 2,
+      "api_error": 6,
+      "unknown": 0,
+      "max_workers": 8
+    },
+    {
+      "segment": "segment-03",
+      "attempts": 90,
+      "success": 88,
+      "api_error": 2,
+      "unknown": 0,
+      "max_workers": 2
+    },
+    {
+      "segment": "segment-04",
+      "attempts": 146,
+      "success": 136,
+      "api_error": 10,
+      "unknown": 0,
+      "max_workers": 2
+    },
+    {
+      "segment": "segment-05",
+      "attempts": 328,
+      "success": 318,
+      "api_error": 10,
+      "unknown": 0,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-06",
+      "attempts": 5185,
+      "success": 5178,
+      "api_error": 6,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-07",
+      "attempts": 147,
+      "success": 146,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-08",
+      "attempts": 4236,
+      "success": 4223,
+      "api_error": 12,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-09",
+      "attempts": 3274,
+      "success": 3266,
+      "api_error": 7,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-10",
+      "attempts": 228,
+      "success": 226,
+      "api_error": 0,
+      "unknown": 2,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-11",
+      "attempts": 109,
+      "success": 108,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-12",
+      "attempts": 705,
+      "success": 703,
+      "api_error": 1,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-13",
+      "attempts": 5409,
+      "success": 5408,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-14",
+      "attempts": 2972,
+      "success": 2968,
+      "api_error": 2,
+      "unknown": 2,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-15",
+      "attempts": 93,
+      "success": 92,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-16",
+      "attempts": 1571,
+      "success": 1570,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-17",
+      "attempts": 60,
+      "success": 59,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-18",
+      "attempts": 2369,
+      "success": 2365,
+      "api_error": 2,
+      "unknown": 2,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-19",
+      "attempts": 579,
+      "success": 578,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-20",
+      "attempts": 898,
+      "success": 897,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-21",
+      "attempts": 83,
+      "success": 82,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-22",
+      "attempts": 1935,
+      "success": 1931,
+      "api_error": 3,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-23",
+      "attempts": 1009,
+      "success": 1008,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-24",
+      "attempts": 9803,
+      "success": 9793,
+      "api_error": 9,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-25",
+      "attempts": 290,
+      "success": 289,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-26",
+      "attempts": 4370,
+      "success": 4366,
+      "api_error": 0,
+      "unknown": 4,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-27",
+      "attempts": 1571,
+      "success": 1570,
+      "api_error": 0,
+      "unknown": 1,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-28",
+      "attempts": 14350,
+      "success": 14341,
+      "api_error": 7,
+      "unknown": 2,
+      "max_workers": 1
+    },
+    {
+      "segment": "segment-29",
+      "attempts": 9755,
+      "success": 9741,
+      "api_error": 14,
+      "unknown": 0,
+      "max_workers": 1
+    }
+  ],
+  "status_policy": "Historical conservative outcome classes; eight early explicit rejections are corrected to api_error. Thirty later unknowns are retained, including one capacity-coded response. Unknown is not equivalent to absence of an HTTP response.",
+  "review": {
+    "successful_responses_covered": 71518,
+    "retained_review_records": 1025,
+    "raw_envelopes_shape_validated": 71518,
+    "distinct_texts_covered": 864,
+    "basis": "Exact-text linkage to substantive inherited semantic reviews plus complete raw-envelope shape validation; not absence of triage flags.",
+    "unknowns_in_negative_denominator": false
+  },
+  "limitations": [
+    "First responses only; no generated tool calls executed.",
+    "Unknown outcomes and API errors are not negative behavioral observations.",
+    "Repeated prompts and exact duplicates do not establish independent trials.",
+    "Provider checkpoint revision, serving precision and backend configuration are unverified.",
+    "Original incident provider and runtime equivalence are unverified.",
+    "Review judgments are inherited agent reviews, not new independent human adjudication.",
+    "Sampling was extended in stages; this is not a single fixed-size preregistered trial.",
+    "Raw operational records are withheld; public provenance is an allowlisted projection."
+  ]
+}

@@ -1,19 +1,36 @@
 # qwen-phonehome-repro
 
-A small, self-contained harness that **replicates Cohere's prefix-continuation
-experiment** on Qwen3.8 and captures the traces, running entirely on a
-**locally self-hosted** copy of the model via [Ollama](https://ollama.com).
+Reproduction experiments for Cohere's report of unsolicited upload behavior in
+Qwen models. This repository separates two different questions:
 
-> **Naming note.** "phone-home" names the phenomenon Cohere studied; this repo
-> reproduces their *prefix-continuation* experiment and does not claim to show
-> spontaneous initiation. See below.
+| Experiment | Question | Observed result |
+|---|---|---|
+| [Unprefilled Flash-Next](results/flash-next-unprefilled/README.md) | Does the model initiate an upload from Cohere's published prompt, without an assistant prefill? | No unsolicited upload/phone-home behavior observed in **71,518 reviewed successful responses**. **30 unknown outcomes** are excluded from that conclusion. |
+| [Local prefix continuation](results/SUMMARY.md) | Given the beginning of an upload command, what destination does the model generate next? | Destination distributions across three locally hosted Qwen variants; not evidence of spontaneous initiation. |
+
+The unprefilled experiment uses `Qwen/Qwen3.8-Flash-Next` through Hugging Face's
+Featherless route. The prefix-continuation experiment runs locally through
+[Ollama](https://ollama.com). Neither executes generated commands.
+
+> **Naming note.** "phone-home" names the phenomenon under investigation, not a
+> finding that these experiments established it.
 
 - Cohere write-up: <https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model>
 - Cohere's published trace + token IDs: [`CohereLabs/10-2026-qwen-investigation-traces`](https://huggingface.co/datasets/CohereLabs/10-2026-qwen-investigation-traces)
 
-## How to read these results
+## Unprefilled Flash-Next results
 
-This experiment asks a narrow question: **if a model is given most of an upload
+The [results package](results/flash-next-unprefilled/README.md) contains the
+observed outputs, denominators, review method, and limitations. The
+[reproduction guide](results/flash-next-unprefilled/REPRODUCE.md) reconstructs the
+exact 2,122-token input and sampling settings for new trials. These are repeated
+single-completion samples, not an executing agent or a multi-turn rollout.
+A negative result at this scale does not rule out rarer behavior or establish
+that the hosted model matches Cohere's original weights and serving stack.
+
+## How to read the local prefix-continuation results
+
+The earlier local experiment asks a narrow question: **if a model is given most of an upload
 command, what destination does it generate next?** It does not test whether the
 model independently chooses to upload anything.
 
@@ -65,7 +82,10 @@ forced: [`results/METHODOLOGY.md`](results/METHODOLOGY.md).
   egress enforcement on a live agent. Downloading the dataset/tokenizer from
   Hugging Face is a separate, intentional network operation.
 
-## Reproduce
+## Reproduce the local prefix-continuation experiment
+
+For the hosted, unprefilled experiment, use its separate
+[reproduction guide](results/flash-next-unprefilled/REPRODUCE.md).
 
 Prereqs: an Ollama server with a Qwen3.8 model pulled, and Python 3.10+.
 
@@ -94,7 +114,7 @@ python harness/reanalyze.py "Q4 n=256::harness/traces/<run>.jsonl"
 python harness/tests/test_classify.py && python harness/tests/test_reanalyze.py
 ```
 
-## Results
+## Local prefix-continuation results
 
 Self-hosted `qwen3.8:27b` (Ollama 0.33.3), Cohere's token-exact prefix and
 sampling config. Counts from `harness/classify.py` (parsed hostnames, no DNS
@@ -143,5 +163,6 @@ provenance and corrections: [`results/METHODOLOGY.md`](results/METHODOLOGY.md).
 ## Attribution
 
 Reproduction prefix, sampling configuration, and the original trace are from
-Cohere's public dataset (above). This harness only drives a local model with
-that published input and records what comes back.
+Cohere's public dataset (above). The local harness drives a self-hosted model with that published prefix. The
+unprefilled harness reconstructs the published prompt without the assistant
+continuation and sends it to the specified hosted model.
